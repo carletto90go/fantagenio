@@ -1,0 +1,48 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Fantagenio</title>
+	<script src="jquery-3.4.1.js"></script>
+	<script src="DataTables/datatables.js"></script>
+	<link rel="stylesheet" type="text/css" href="DataTables/datatables.css">
+	<script src="index.js"></script>
+
+</head>
+
+<body>
+
+<table class="display" id="pastMatches">
+	<caption id="pastMatchesTableTitle"></caption>
+		<tbody>
+		</tbody>
+	</table>
+
+
+
+<input type="button" id="getStandings" value="Classifica">
+<table id="standings" class="display">
+</table>
+
+
+<table class="display">
+	<caption id="nextMatchesTableTitle"></caption>
+        <thead>
+			<tr>
+				<th scope="col">Match</th>
+				<th scope="col">Home goals</th>
+				<th scope="col">Away goals</th>
+				<th scope="col"></th>
+				<th scope="col">Data</th>
+			</tr>
+		</thead>
+		<tbody id="nextMatches">
+		</tbody>
+	</table>
+	
+
+
+</body>
+</html>
