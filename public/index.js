@@ -34,7 +34,8 @@ async function Risultati(e){
 		},
 		credentials: 'include'
     };
-	
+
+	//await fetch('/scriptInsertTable', options);
 	const server_response = await fetch('/calcolagiornata', options);
     const classificajson = await server_response.json();
 	

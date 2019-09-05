@@ -1,14 +1,64 @@
 const express = require('express');
-const Datastore = require('nedb');
 const fetch = require('node-fetch');
 const mysql = require('mysql2');
+
+const Sequelize = require('sequelize');
+
+const sequelize = new Sequelize('fantatest', 'fantatest', 'inter1908', {
+  host: 'db4free.net',
+  dialect: 'mysql',
+  timestamps : 'false',
+  freezeTableName: true
+});
+
+//TABLE DEFINITION
+const Giornata = sequelize.define('giornata', {
+    numero_giornata : { type : Sequelize.INTEGER, allowNull:false },
+    punti_giornata : { type : Sequelize.INTEGER, allowNull:false },
+    utente_id : { type : Sequelize.INTEGER, allowNull:false },
+    },
+     {
+     timestamps : false,
+     freezeTableName: true
+});
+Giornata.removeAttribute('id');
+const Scommesse = sequelize.define('scommessa',
+    {      // attributes
+      //id : {},
+      squadra_casa : { type: Sequelize.STRING, allowNull:false },
+      squadra_ospite : { type: Sequelize.STRING, allowNull:false },
+      punteggio_casa : { type: Sequelize.INTEGER, allowNull:false },
+      punteggio_ospite : { type: Sequelize.INTEGER, allowNull:false },
+      _1x2 : { type: Sequelize.STRING, allowNull:false, field : "1x2"},
+      nr_giornata : { type: Sequelize.INTEGER, allowNull:false },
+      //scommessa_vinta_re : { type: Sequelize.BOOLEAN, allowNull:false },
+      //scommessa_vinta_1x2 : { type: Sequelize.BOOLEAN, allowNull:false },
+      codice_match : { type: Sequelize.INTEGER, allowNull:false },
+      utente_id : { type: Sequelize.INTEGER, allowNull:false },
+      //creato :  { type: Sequelize.INT, allowNull:false },
+      //modificato: { type: Sequelize.INT, allowNull:false }
+    },
+     {
+     timestamps : false,
+     freezeTableName: true
+});
+Scommesse.removeAttribute('id');
+
+sequelize
+  .authenticate()
+  .then(() => {
+    console.log('Connection has been established successfully.');
+  })
+  .catch(err => {
+    console.error('DI****E');
+  });
 
 let currentRound = null;
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-
+/*
 let connection = mysql.createConnection( {
 	host     : "db4free.net",
 	user     : "fantatest",
@@ -23,6 +73,8 @@ connection.connect((err) => {
   else console.log('Connected!');
 });
 
+*/
+/*
 connection.query('SELECT * FROM utente WHERE 1', (err, res, fields) => {
 	console.log("---------------------Check 1-----------------");
 	console.log(res);
@@ -31,7 +83,7 @@ connection.query('SELECT * FROM utente WHERE 1', (err, res, fields) => {
 	console.log("---------------------Check 1-----------------");
 	console.log(err);
 } );
-
+*/
 app.listen(port, () => {
 	console.log(`Starting server at ${port}`);
 });
@@ -42,8 +94,6 @@ app.listen(port, () => {
 app.use(express.static('public'));
 app.use(express.json({ limit: '1mb' }));
 
-const database = new Datastore('database.db');
-database.loadDatabase();
 
 async function getNextMatches(){
 	const options = {
@@ -135,14 +185,45 @@ app.get('/pastmatches', (request, response) => {
 	}
 });
 
+app.get('/scriptInsertTable', (request, response) => {
+/*
+    let giornata = {};
+
+    for(let i =0; i<38; i++){
+        for(let j = 1; j<=5; j++) { //ADESSO CI SONO 5 UTENTI, QUA SE SI DOVRà FARE UNA ROBA DEL GENERE SI FARà UNA QUERY SUL NUMERO DI UTENTI
+            giornata.numero_giornata = i+1;
+            giornata.punti_giornata = 0;
+            giornata.utente_id = j;
+            Giornata.create(giornata);
+        }
+
+    }*/
+    response.json( { "bella" : "vez" });
+
+});
+
 app.post('/apipost', (request, response) => {
 	const data = request.body;
+
 	console.log(request.body);
-	//DATABASE SAVE (id,squadra_casa,squadra_ospite,punteggio_casa,punteggio_ospite,1x2,giornata_id,utente_id,data_inserimento)
+
+    let match = {};
+
+    match.squadra_casa = "Home Team";
+    match.squadra_ospite = "Away Team";
+    match.punteggio_casa = data.homegoals;
+    match.punteggio_ospite = data.awaygoals;
+    match._1x2 = "1";
+    match.nr_giornata = 1;
+    match.codice_match = data.idmatch;
+    match.utente_id = 1;
+
+	Scommesse.create(match);
+	//DATABASE SAVE
+	/*
+	let sqlQuery = "INSERT INTO scommessa (squadra_casa,squadra_ospite,punteggio_casa,punteggio_ospite,1x2,nr_giornata,utente_id) VALUES (?,?,?,?,?,?,?)";
 	
-	let sqlQuery = "INSERT INTO scommessa VALUES (?,?,?,?,?,?,?,?,?)"; 
-	let d = new Date().toISOString();
-	connection.query(sqlQuery,[1,"home","away",3,1,"1",1,1,d], (err, rows, fields) => {
+	connection.query(sqlQuery,["home","away",3,1,"1",1,1], (err, rows, fields) => {
 		console.log("---------------------Check-----------------");
 		console.log(rows);
 		console.log("---------------------Check-----------------");
@@ -150,28 +231,7 @@ app.post('/apipost', (request, response) => {
 		console.log("---------------------Check-----------------");
 		console.log(err);	
 	});
-	
-	/*
-	pst.setInt(1, 1);
-	pst.setString(2, "home");
-	pst.setString(3, "away");
-	pst.setInt(4, data.homeGoals);
-	pst.setInt(5, data.awayGoals);
-	pst.setString(6, "X");
-	pst.setInt(7, 1);
-	pst.setInt(8, 1);
-	pst.setDate(9, Date.now());
-	
-	pst.executeUpdate();
 	*/
-	
-
-	
-	database.insert(data);
-	
-	database.findOne( { idmatch : data.idmatch }, (err, d) => { //sta roba cerca nel db l'id del match appena inserito
-			response.json(d._id);
-	});
 });
 
 
