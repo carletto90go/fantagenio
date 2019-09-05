@@ -1,0 +1,22 @@
+{
+  "name": "fantabolla",
+  "version": "1.0.0",
+  "description": "Fantaschedine",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "vinxavi",
+  "license": "ISC",
+  "dependencies": {
+    "@okta/okta-signin-widget": "^3.2.0",
+    "cas-authentication": "0.0.8",
+    "express": "^4.17.1",
+    "express-session": "^1.16.2",
+    "mysql": "^2.17.1",
+    "mysql2": "^1.7.0",
+    "nedb": "^1.8.0",
+    "node-fetch": "^2.6.0",
+    "sequelize": "^5.18.1"
+  }
+}
