@@ -11,79 +11,33 @@ const sequelize = new Sequelize('fantatest', 'fantatest', 'inter1908', {
   freezeTableName: true
 });
 
-//TABLE DEFINITION
-const Giornata = sequelize.define('giornata', {
-    numero_giornata : { type : Sequelize.INTEGER, allowNull:false },
-    punti_giornata : { type : Sequelize.INTEGER, allowNull:false },
-    utente_id : { type : Sequelize.INTEGER, allowNull:false },
-    },
-     {
-     timestamps : false,
-     freezeTableName: true
-});
-Giornata.removeAttribute('id');
-const Scommesse = sequelize.define('scommessa',
-    {      // attributes
-      //id : {},
-      squadra_casa : { type: Sequelize.STRING, allowNull:false },
-      squadra_ospite : { type: Sequelize.STRING, allowNull:false },
-      punteggio_casa : { type: Sequelize.INTEGER, allowNull:false },
-      punteggio_ospite : { type: Sequelize.INTEGER, allowNull:false },
-      _1x2 : { type: Sequelize.STRING, allowNull:false, field : "1x2"},
-      nr_giornata : { type: Sequelize.INTEGER, allowNull:false },
-      //scommessa_vinta_re : { type: Sequelize.BOOLEAN, allowNull:false },
-      //scommessa_vinta_1x2 : { type: Sequelize.BOOLEAN, allowNull:false },
-      codice_match : { type: Sequelize.INTEGER, allowNull:false },
-      utente_id : { type: Sequelize.INTEGER, allowNull:false },
-      //creato :  { type: Sequelize.INT, allowNull:false },
-      //modificato: { type: Sequelize.INT, allowNull:false }
-    },
-     {
-     timestamps : false,
-     freezeTableName: true
-});
-Scommesse.removeAttribute('id');
 
-sequelize
-  .authenticate()
-  .then(() => {
-    console.log('Connection has been established successfully.');
-  })
-  .catch(err => {
-    console.error('DI****E');
-  });
+
+
+
+
 
 let currentRound = null;
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-/*
-let connection = mysql.createConnection( {
-	host     : "db4free.net",
-	user     : "fantatest",
-	password : "inter1908",
-	database : "fantatest"
-	
-} );
+
+//let connection = mysql.createConnection( {
+//	host     : "db4free.net",
+//	user     : "fantatest",
+//	password : "inter1908",
+//	database : "fantatest"
+//
+//} );
+//
+//
+//connection.connect((err) => {
+//  if (err) console.log( err.stack );
+//  else console.log('Connected!');
+//});
 
 
-connection.connect((err) => {
-  if (err) console.log( err.stack );
-  else console.log('Connected!');
-});
-
-*/
-/*
-connection.query('SELECT * FROM utente WHERE 1', (err, res, fields) => {
-	console.log("---------------------Check 1-----------------");
-	console.log(res);
-	console.log("---------------------Check 1-----------------");
-	console.log(fields);
-	console.log("---------------------Check 1-----------------");
-	console.log(err);
-} );
-*/
 app.listen(port, () => {
 	console.log(`Starting server at ${port}`);
 });
@@ -94,6 +48,10 @@ app.listen(port, () => {
 app.use(express.static('public'));
 app.use(express.json({ limit: '1mb' }));
 
+//Sta roba serve per evitare multiple chiamate al require
+app.set('db', require('./db/dbTables')); //let utente = app.get('db').utente;
+
+let Giornata = app.get('db').Giornata;
 
 async function getNextMatches(){
 	const options = {
@@ -206,7 +164,9 @@ app.post('/apipost', (request, response) => {
 	const data = request.body;
 
 	console.log(request.body);
+    const Scommesse = app.get('db').Scommesse;
 
+    console.log(Scommesse);
     let match = {};
 
     match.squadra_casa = "Home Team";
@@ -219,19 +179,8 @@ app.post('/apipost', (request, response) => {
     match.utente_id = 1;
 
 	Scommesse.create(match);
-	//DATABASE SAVE
-	/*
-	let sqlQuery = "INSERT INTO scommessa (squadra_casa,squadra_ospite,punteggio_casa,punteggio_ospite,1x2,nr_giornata,utente_id) VALUES (?,?,?,?,?,?,?)";
-	
-	connection.query(sqlQuery,["home","away",3,1,"1",1,1], (err, rows, fields) => {
-		console.log("---------------------Check-----------------");
-		console.log(rows);
-		console.log("---------------------Check-----------------");
-		console.log(fields);
-		console.log("---------------------Check-----------------");
-		console.log(err);	
-	});
-	*/
+
+	response.json({"bella" : "vez"});
 });
 
 
@@ -254,60 +203,4 @@ let classificaJson = { //me la calcola il db
 		{ "team" : "Barrans", "pres" : "Frindo", "points" : 3, "pos": "" }
 	]
 	
-}
-
-
-/*
-let nextMatches = {
-	"round" : 2,
-	"matches" : 
-		[
-			{ "match" : "Inter vs Juventus", "id" : 0 },
-			{ "match" : "Milan vs Lecce", "id" : 11 },
-			{ "match" : "Roma vs Torino", "id" : 22 },
-			{ "match" : "Napoli vs Bologna", "id" : 33 },
-			{ "match" : "Parma vs Carpi", "id" : 44 }
-		]
-}
-*/
-let pastMatches = {
-	"round" : 1,
-	"results" : 
-	[
-		{ 
-			"id" : 0,
-			"match" : "Inter vs Juventus",
-			"homegoals" : 4,
-			"awaygoals" : 0,
-			"round" : 1
-		},
-		{ 
-			"id" : 11,
-			"match" : "Milan vs Lecce",
-			"homegoals" : 3,
-			"awaygoals" : 4,
-			"round" : 1
-		},
-		{ 
-			"id" : 22,
-			"match" : "Roma vs Torino",
-			"homegoals" : 3,
-			"awaygoals" : 2,
-			"round" : 1
-		},
-		{ 
-			"id" : 33,
-			"match" : "Napoli vs Bologna",
-			"homegoals" : 1,
-			"awaygoals" : 1,
-			"round" : 1
-		},
-		{ 
-			"id" : 44,
-			"match" : "Parma vs Carpi",
-			"homegoals" : 4,
-			"awaygoals" : 2,
-			"round" : 1
-		}	
-	]
 }
