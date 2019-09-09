@@ -51,7 +51,7 @@ app.use(express.json({ limit: '1mb' }));
 //Sta roba serve per evitare multiple chiamate al require
 app.set('db', require('./db/dbTables')); //let utente = app.get('db').utente;
 
-let Giornata = app.get('db').Giornata;
+let Giornata = app.get('db').giornata;
 
 async function getNextMatches(){
 	const options = {
@@ -164,7 +164,7 @@ app.post('/apipost', (request, response) => {
 	const data = request.body;
 
 	console.log(request.body);
-    const Scommesse = app.get('db').Scommesse;
+    const Scommesse = app.get('db').scommessa;
 
     console.log(Scommesse);
     let match = {};
