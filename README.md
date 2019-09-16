@@ -1,2 +1,0 @@
-# fantagenio
-Progetto interno fantagenio
