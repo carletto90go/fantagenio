@@ -19,10 +19,10 @@ sequelize
   });
 
 let models = [
-    //'classifica',
+    'classifica',
     'giornata',
-    'scommessa'
-    //'utente'
+    'scommessa',
+    'utente',
 ];
 
 

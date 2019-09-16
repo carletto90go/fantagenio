@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
 const sequelize = require('./dbTables').sequelize;
+
 // initialize database connection
 //const sequelize = new Sequelize('fantatest', 'fantatest', 'inter1908', {
 //  host: 'db4free.net',
@@ -11,25 +12,25 @@ const sequelize = require('./dbTables').sequelize;
 module.exports = function (sequelize, Sequelize) {
     const Scommesse = sequelize.define('scommessa',
         {      // attributes
-        //id : {},
-        squadra_casa : { type: Sequelize.STRING, allowNull:false },
-        squadra_ospite : { type: Sequelize.STRING, allowNull:false },
-        punteggio_casa : { type: Sequelize.INTEGER, allowNull:false },
-        punteggio_ospite : { type: Sequelize.INTEGER, allowNull:false },
-        _1x2 : { type: Sequelize.STRING, allowNull:false, field : "1x2"},
-        nr_giornata : { type: Sequelize.INTEGER, allowNull:false },
-        //scommessa_vinta_re : { type: Sequelize.BOOLEAN, allowNull:false },
-        //scommessa_vinta_1x2 : { type: Sequelize.BOOLEAN, allowNull:false },
-        codice_match : { type: Sequelize.INTEGER, allowNull:false },
-        utente_id : { type: Sequelize.INTEGER, allowNull:false },
-        //creato :  { type: Sequelize.INT, allowNull:false },
-        //modificato: { type: Sequelize.INT, allowNull:false }
+        id : { type: Sequelize.INTEGER, primaryKey:true },
+        homeTeam : { type: Sequelize.STRING, allowNull:false, field:"squadra_casa" },
+        awayTeam : { type: Sequelize.STRING, allowNull:false, field:"squadra_ospite" },
+        homeGoals : { type: Sequelize.INTEGER, allowNull:false, field:"punteggio_casa" },
+        awayGoals : { type: Sequelize.INTEGER, allowNull:false, field:"punteggio_ospite" },
+        bet1x2 : { type: Sequelize.STRING, allowNull:false, field : "1x2"},
+        round : { type: Sequelize.INTEGER, allowNull:false, field:"nr_giornata" },
+        winResult : { type: Sequelize.BOOLEAN, allowNull:true, field:"scommessa_vinta_re" },
+        win1x2 : { type: Sequelize.BOOLEAN, allowNull:true, field:"scommessa_vinta_1x2" },
+        idMatch : { type: Sequelize.INTEGER, allowNull:false, field:"codice_match" },
+        userId : { type: Sequelize.INTEGER, allowNull:false, field:"utente_id" },
+        //createdOn :  { type: Sequelize.INTEGER, allowNull:false },
+        //modifiedOn { type: Sequelize.INTEGER, allowNull:false }
         },
         {
         timestamps : false,
         freezeTableName: true
      });
-     Scommesse.removeAttribute('id');
+     //Scommesse.removeAttribute('id');
 
     return Scommesse;
 

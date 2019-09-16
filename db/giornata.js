@@ -11,15 +11,15 @@ const sequelize = require('./dbTables').sequelize;
 
 module.exports = function (sequelize, Sequelize) {
     const Giornata = sequelize.define('giornata', {
-        numero_giornata : { type : Sequelize.INTEGER, allowNull:false },
-        punti_giornata : { type : Sequelize.INTEGER, allowNull:false },
-        utente_id : { type : Sequelize.INTEGER, allowNull:false },
+        id : { type : Sequelize.INTEGER, primaryKey:true },
+        round : { type : Sequelize.INTEGER, allowNull:false, field: "nr_giornata" },
+        points : { type : Sequelize.INTEGER, allowNull:false, field: "punti_giornata" },
+        userId : { type : Sequelize.INTEGER, allowNull:false, field: "utente_id" },
         },
          {
          timestamps : false,
          freezeTableName: true
         });
-    Giornata.removeAttribute('id');
 
     return Giornata;
 }

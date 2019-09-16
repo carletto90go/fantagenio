@@ -1,8 +1,10 @@
 const express = require('express');
 const fetch = require('node-fetch');
 const mysql = require('mysql2');
-
 const Sequelize = require('sequelize');
+
+let currentRound = null; //forse servirà
+
 
 const sequelize = new Sequelize('fantatest', 'fantatest', 'inter1908', {
   host: 'db4free.net',
@@ -11,39 +13,12 @@ const sequelize = new Sequelize('fantatest', 'fantatest', 'inter1908', {
   freezeTableName: true
 });
 
-
-
-
-
-
-
-let currentRound = null;
-
 const app = express();
 const port = process.env.PORT || 3000;
-
-
-//let connection = mysql.createConnection( {
-//	host     : "db4free.net",
-//	user     : "fantatest",
-//	password : "inter1908",
-//	database : "fantatest"
-//
-//} );
-//
-//
-//connection.connect((err) => {
-//  if (err) console.log( err.stack );
-//  else console.log('Connected!');
-//});
-
 
 app.listen(port, () => {
 	console.log(`Starting server at ${port}`);
 });
-
-
-
 
 app.use(express.static('public'));
 app.use(express.json({ limit: '1mb' }));
@@ -51,7 +26,6 @@ app.use(express.json({ limit: '1mb' }));
 //Sta roba serve per evitare multiple chiamate al require
 app.set('db', require('./db/dbTables')); //let utente = app.get('db').utente;
 
-let Giornata = app.get('db').giornata;
 
 async function getNextMatches(){
 	const options = {
@@ -143,45 +117,48 @@ app.get('/pastmatches', (request, response) => {
 	}
 });
 
-app.get('/scriptInsertTable', (request, response) => {
-/*
-    let giornata = {};
+//CARICAMENTO MASSIVO DB IN CASO SERVA
+//app.get('/scriptInsertTable', (request, response) => {
+//
+//    let giornata = {};
+//
+//    for(let i =0; i<38; i++){
+//        for(let j = 1; j<=5; j++) { //ADESSO CI SONO 5 UTENTI, QUA SE SI DOVRà FARE UNA ROBA DEL GENERE SI FARà UNA QUERY SUL NUMERO DI UTENTI
+//            giornata.numero_giornata = i+1;
+//            giornata.punti_giornata = 0;
+//            giornata.utente_id = j;
+//            Giornata.create(giornata);
+//        }
+//
+//    }
+//    response.json( { "bella" : "vez" });
+//});
 
-    for(let i =0; i<38; i++){
-        for(let j = 1; j<=5; j++) { //ADESSO CI SONO 5 UTENTI, QUA SE SI DOVRà FARE UNA ROBA DEL GENERE SI FARà UNA QUERY SUL NUMERO DI UTENTI
-            giornata.numero_giornata = i+1;
-            giornata.punti_giornata = 0;
-            giornata.utente_id = j;
-            Giornata.create(giornata);
-        }
 
-    }*/
-    response.json( { "bella" : "vez" });
-
-});
-
-app.post('/apipost', (request, response) => {
-	const data = request.body;
-
-	console.log(request.body);
+app.post('/results/matches', async (request, response) => {
+	const data = request.body.request;
+    try{
     const Scommesse = app.get('db').scommessa;
 
-    console.log(Scommesse);
-    let match = {};
+	data.forEach( async (match) =>  {
+        let result = await Scommesse.findOne({ where: {idMatch : match.idMatch , userId : match.userId }});
+        if(!result) {
+            //CREATE
+            Scommesse.create(match)
+            .then( () => { response.send("Record Created"); });
+        }
+        else {
+            //UPDATE
+            match.id = result.id;
+            Scommesse.upsert(match)
+            .then( () => { response.send("Record Updated"); });
+        }
+	});
 
-    match.squadra_casa = "Home Team";
-    match.squadra_ospite = "Away Team";
-    match.punteggio_casa = data.homegoals;
-    match.punteggio_ospite = data.awaygoals;
-    match._1x2 = "1";
-    match.nr_giornata = 1;
-    match.codice_match = data.idmatch;
-    match.utente_id = 1;
-
-	Scommesse.create(match);
-
-	response.json({"bella" : "vez"});
+	}
+	catch(e) { console.error(e); }
 });
+
 
 
 app.get('/calcolagiornata', (request, response) => {
@@ -189,8 +166,22 @@ app.get('/calcolagiornata', (request, response) => {
 	response.json(classifica);
 });
 
-function calcolagiornata(){
-	
+async function calcolagiornata(){
+    currentRound = 3; //TROVARE UN MODO PER CAPIRE A CHE ROUND SIAMO
+
+	const options = {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json'
+		}
+    };
+	let response = await fetch("https://www.thesportsdb.com/api/v1/json/1/eventsround.php?id=4332&r="+currentRound+"&s=1920", options);
+	let res = await response.json();
+
+	let results = res.events;
+
+
+
 	return classificaJson;
 }
 
