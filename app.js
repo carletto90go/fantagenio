@@ -34,6 +34,9 @@ app.use(express.json({ limit: '1mb' }));
 //Sta roba serve per evitare multiple chiamate al require
 app.set('db', require('./db/dbTables')); //let utente = app.get('db').utente;
 
+app.get('/', (request, response) => {
+    response.send("Bella Karl");
+});
 
 app.post('/login', async (request, response) => {
     const data = request.body.request;

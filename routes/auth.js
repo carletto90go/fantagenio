@@ -33,7 +33,7 @@ router.get('/myPrediction', async (request, response) => {
 
 
 router.get('/calcolagiornata', (request, response) => {
-	classifica = calcolagiornata();
+	if(!calcolagiornata()) { return response.status(400).send("Something gone wrong!"); };
 	response.json(classifica);
 });
 
@@ -49,31 +49,37 @@ async function calcolagiornata(){
 			'Content-Type': 'application/json'
 		}
     };
-    const Scommesse = app.get('db').scommessa;
-    const Giornata = app.get('db').giornata;
-    const Utente = app.get('db').utente;
+
 
 	let response = await fetch("https://www.thesportsdb.com/api/v1/json/1/eventsround.php?id=4332&r="+currentRound+"&s=1920", options);
 	let res = await response.json();
 	let results = res.events;
 
-    let dbUsers = await Utente.findAndCountAll();
+    const Scommesse = app.get('db').scommessa;
+    const Giornata = app.get('db').giornata;
+    const Utente = app.get('db').utente;
 
-    dbUsers.rows.forEach( async (user) => {
-        let dbRound = await Giornata.findOne({ where : {round : currentRound, userId : user.id}});
+    try{
 
-        let dbPredictions = await Scommesse.findAll({ where: { round : currentRound, userId : user.id }});
+        let dbUsers = await Utente.findAndCountAll();
 
-        if(dbPredictions) {
-            userPoints += calculatePoints(dbPredictions, results);
-            console.log(userPoints);
-            dbRound.dataValues.points = userPoints;
-            Giornata.upsert(dbRound.dataValues);
-        }
-    });
+        dbUsers.rows.forEach( async (user) => {
+            let dbRound = await Giornata.findOne({ where : {round : currentRound, userId : user.id}});
 
+            let dbPredictions = await Scommesse.findAll({ where: { round : currentRound, userId : user.id }});
 
-	return classificaJson;
+            if(dbPredictions) {
+                userPoints += calculatePoints(dbPredictions, results);
+                console.log(userPoints);
+                dbRound.dataValues.points = userPoints;
+                Giornata.upsert(dbRound.dataValues);
+            }
+        });
+
+    }
+    catch(e) { console.log(e); return false; }
+
+    return true;
 }
 
 
