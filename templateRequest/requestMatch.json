@@ -1,0 +1,105 @@
+{
+	"request" : 
+	[
+		{ 
+			"idMatch" : "609285",
+			"homeTeam" : "Parma",
+			"awayTeam" : "Juve",
+			"homeGoals" : 0,
+			"awayGoals" : 1,
+			"_1x2" : "2",
+			"round": 1,
+			"user" : 1
+		},
+		{ 
+			"idMatch" : "609286",
+			"homeTeam" : "Fiorentina",
+			"awayTeam" : "Napoli",
+			"homeGoals" : 3,
+			"awayGoals" : 0,
+			"_1x2" : "1",
+			"round": 1,
+			"user" : 1
+		},
+		{ 
+			"idMatch" : "609287",
+			"homeTeam" : "Udinese",
+			"awayTeam" : "Milan",
+			"homeGoals" : 2,
+			"awayGoals" : 2,
+			"_1x2" : "X",
+			"round": 1,
+			"user" : 1
+		},
+		{
+			"idMatch" : "609288",
+			"homeTeam" : "Torino",
+			"awayTeam" : "Sassuolo",
+			"homeGoals" : 1,
+			"awayGoals" : 1,
+			"_1x2" : "X",
+			"round": 1,
+			"user" : 1
+		},
+		{
+			"idMatch" : "609289",
+			"homeTeam" : "Verona",
+			"awayTeam" : "Bologna",
+			"homeGoals" : 1,
+			"awayGoals" : 1,
+			"_1x2" : "X",
+			"round": 1,
+			"user" : 1
+		},
+		{
+			"idMatch" : "609290",
+			"homeTeam" : "Roma",
+			"awayTeam" : "Genoa",
+			"homeGoals" : 5,
+			"awayGoals" : 0,
+			"_1x2" : "1",
+			"round": 1,
+			"user" : 1
+		},
+		{
+			"idMatch" : "609291",
+			"homeTeam" : "Sampdoria",
+			"awayTeam" : "Lazio",
+			"homeGoals" : 0,
+			"awayGoals" : 1,
+			"_1x2" : "2",
+			"round": 1,
+			"user" : 1
+		},
+		{
+			"idMatch" : "609292",
+			"homeTeam" : "Cagliari",
+			"awayTeam" : "Brescia",
+			"homeGoals" : 0,
+			"awayGoals" : 0,
+			"_1x2" : "X",
+			"round": 1,
+			"user" : 1
+		},
+		{
+			"idMatch" : "609293",
+			"homeTeam" : "Spal",
+			"awayTeam" : "Atalanta",
+			"homeGoals" : 2,
+			"awayGoals" : 1,
+			"_1x2" : "1",
+			"round": 1,
+			"user" : 1
+		},
+		{
+			"idMatch" : "609294",
+			"homeTeam" : "Inter",
+			"awayTeam" : "Lecce",
+			"homeGoals" : 2,
+			"awayGoals" : 0,
+			"_1x2" : "1",
+			"round": 1,
+			"user" : 1
+		}
+	]
+}
