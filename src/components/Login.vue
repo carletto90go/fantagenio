@@ -6,8 +6,10 @@
         <input type="text" name="username" v-model="input.username" placeholder="username"/>
         <input type="password" name="password" v-model="input.password" placeholder="password"/>
         <button type="button" v-on:click="login()">login</button>
-  <!--      <p class="message">Not registered? <a href="#">Create an account</a></p>-->
       </form>
+       <pre>
+       {{output}}
+       </pre>
     </div>
   </div>
 </template>
@@ -18,25 +20,49 @@
         data() {
             return {
                 input: {
-                    username: "",
-                    password: ""
+                    username: "carlo",
+                    password: "manu19",
+                    output: ""
                 }
             }
         },
         methods: {
             login() {
+
             console.log(this.input.username);
-            console.log(this.$parent);
+
                 if(this.input.username != "" && this.input.password != "") {
-                    if(this.input.username == this.$parent.mockAccount.username && this.input.password == this.$parent.mockAccount.password) {
-                        this.$emit("authenticated", true);
-                        this.$router.replace({ name: "bet" });
+                         let currentObj = this;
+                         this.axios.post('https://hidden-ocean-91661.herokuapp.com/login',
+                         {
+
+                         "request":{
+                                        username: this.input.username,
+                                        password: this.input.password
+                                    }})
+                                    .then(function (response) {
+                                   //    this.output = response.data;
+                                        console.log(response.data);
+                                   //      this.$emit("authenticated", true);
+                                         currentObj.$router.replace({ name: "bet" });
+                                    })
+                                    .catch(function (error) {
+                                     currentObj.input.output = error;
+
+                                      //  console.error(error);
+
+                                    });
+                  //              }
+                 //   if(this.input.username == 'dio' && this.input.password == 'porco') {
+
                     } else {
                         console.log("The username and / or password is incorrect");
+
                     }
-                } else {
-                    console.log("A username and password must be present");
-                }
+//                }
+//                 else {
+//                    console.log("A username and password must be present");
+//                }
             }
         }
     }
