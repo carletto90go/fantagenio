@@ -13,7 +13,6 @@ module.exports = function (sequelize, Sequelize) {
     const Classifica = sequelize.define('classifica', {
         id : { type: Sequelize.INTEGER, primaryKey:true },
         userId : { type : Sequelize.INTEGER, allowNull:false, field: "utente_id" },
-        round : { type : Sequelize.INTEGER, allowNull:false, field: "giornata" },
         points : { type : Sequelize.INTEGER, allowNull:false, field: "punteggio" }
         },
          {

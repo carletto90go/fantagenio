@@ -1,11 +1,18 @@
+const express = require('express');
 const router = require('express').Router();
 const jwt = require('jsonwebtoken');
+const fetch = require('node-fetch');
+
+router.use(express.json({ limit: '1mb' }));
+
+const app = express();
+app.set('db', require('../db/dbTables'));
 
 function auth(request, response, next){
     const token = request.header('auth-token');
     if(!token) return response.status(401).send("Access Denied");
     try{
-        const verified = jwt.verify(token, process.env.TOKEN_SECRET);
+        const verified = jwt.verify(token, "pickUMatterTeamIsTheBestTeam");
         request.user = verified;
         next();
     }
@@ -17,11 +24,6 @@ router.use(auth);
 router.post('/register'), (request, response) => {
     response.send("Register");
 });
-
-router.post('/login', (request, response) => {
-
-
-});
 */
 
 router.get('/myPrediction', async (request, response) => {
@@ -32,9 +34,31 @@ router.get('/myPrediction', async (request, response) => {
 
 
 
-router.get('/calcolagiornata', (request, response) => {
-	if(!calcolagiornata()) { return response.status(400).send("Something gone wrong!"); };
-	response.json(classifica);
+
+router.get('/calcolagiornata', async (request, response) => {
+	//if(!calcolagiornata()) { return response.status(400).send("Something gone wrong! Calcolo"); };
+
+    let currentRound = 1;
+
+    const Giornata = app.get('db').giornata;
+    const Classifica = app.get('db').classifica;
+
+    let dbResultClassifica = await Classifica.findAll();
+
+    dbResultClassifica.forEach( async (user) => {
+        let dbResultGiornata = await Giornata.findOne({ where: { userId : user.id, round : currentRound }});
+        user.dataValues.points += dbResultGiornata.points;
+        Classifica.upsert(user.dataValues);
+    });
+
+    dbResultClassifica = await Classifica.findAll();
+
+    let jsonResponse = [];
+
+    dbResultClassifica.forEach( item => {
+        jsonResponse.push( {id : item.id, userId : item.userId, points : item.points } );
+    });
+	response.json(jsonResponse);
 });
 
 
